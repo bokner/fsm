@@ -11,6 +11,10 @@ defmodule Fsm do
       def new do
         %__MODULE__{state: unquote(opts[:initial_state]), data: unquote(opts[:initial_data])}
       end
+      
+      def new(initial_data) do
+        %__MODULE__{state: unquote(opts[:initial_state]), data: initial_data}
+      end
 
       def state(%__MODULE__{state: state}), do: state
       def data(%__MODULE__{data: data}), do: data
