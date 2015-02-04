@@ -3,24 +3,22 @@ defmodule Fsm do
     quote do
       import Fsm
 
-      defstruct [:state, :data]
-
       @declaring_state nil
       @declared_events HashSet.new
 
       def new do
-        %__MODULE__{state: unquote(opts[:initial_state]), data: unquote(opts[:initial_data])}
+        %{state: unquote(opts[:initial_state]), data: unquote(opts[:initial_data])}
       end
-      
+
       def new(initial_data) do
-        %__MODULE__{state: unquote(opts[:initial_state]), data: initial_data}
+        %{state: unquote(opts[:initial_state]), data: initial_data}
       end
 
-      def state(%__MODULE__{state: state}), do: state
-      def data(%__MODULE__{data: data}), do: data
+      def state(%{state: state}), do: state
+      def data(%{data: data}), do: data
 
-      defp change_state(%__MODULE__{} = fsm, {:action_responses, responses}), do: parse_action_responses(fsm, responses)
-      defp change_state(%__MODULE__{} = fsm, _), do: fsm
+      defp change_state(%{} = fsm, {:action_responses, responses}), do: parse_action_responses(fsm, responses)
+      defp change_state(%{} = fsm, _), do: fsm
 
       defp parse_action_responses(fsm, responses) do
         Enum.reduce(responses, fsm, fn(response, fsm) ->
@@ -29,11 +27,11 @@ defmodule Fsm do
       end
 
       defp handle_action_response(fsm, {:next_state, next_state}) do
-        %__MODULE__{fsm | state: next_state}
+        %{fsm | state: next_state}
       end
 
       defp handle_action_response(fsm, {:new_data, new_data}) do
-        %__MODULE__{fsm | data: new_data}
+        %{fsm | data: new_data}
       end
 
       defp handle_action_response(fsm, {:respond, response}) do
@@ -164,11 +162,11 @@ defmodule Fsm do
       transition_args = [
         if @declaring_state do
           quote do
-            %__MODULE__{state: unquote(@declaring_state) = unquote(state_arg), data: unquote(data_arg)} = fsm
+            %{state: unquote(@declaring_state) = unquote(state_arg), data: unquote(data_arg)} = fsm
           end
         else
           quote do
-            %__MODULE__{state: unquote(state_arg), data: unquote(data_arg)} = fsm
+            %{state: unquote(state_arg), data: unquote(data_arg)} = fsm
           end
         end,
 

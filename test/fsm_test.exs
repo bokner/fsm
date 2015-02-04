@@ -99,6 +99,8 @@ defmodule FsmTest do
   test "global handlers" do
     assert(
       GlobalHandlers.new
+      |> GlobalHandlers.run
+      |> GlobalHandlers.stop
       |> GlobalHandlers.undefined_event1
       |> GlobalHandlers.state == :invalid1
     )
@@ -200,7 +202,7 @@ defmodule FsmTest do
 
     assert(
       ResponseFsm.new
-      |> ResponseFsm.stop == {:error, %ResponseFsm{data: 0, state: :stopped}}
+      |> ResponseFsm.stop == {:error, %{data: 0, state: :stopped}}
     )
   end
 
@@ -273,13 +275,13 @@ defmodule FsmTest do
     assert(
       PatternMatch.new
       |> PatternMatch.stop
-      |> PatternMatch.dummy == {:dummy, %PatternMatch{data: 10, state: :stopped}}
+      |> PatternMatch.dummy == {:dummy, %{data: 10, state: :stopped}}
     )
 
     assert(
       PatternMatch.new
       |> PatternMatch.stop
-      |> PatternMatch.toggle_speed == {:error, %PatternMatch{data: 10, state: :stopped}}
+      |> PatternMatch.toggle_speed == {:error, %{data: 10, state: :stopped}}
     )
 
     assert_raise(FunctionClauseError, fn ->
