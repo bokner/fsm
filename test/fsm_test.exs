@@ -202,7 +202,7 @@ defmodule FsmTest do
 
     assert(
       ResponseFsm.new
-      |> ResponseFsm.stop == {:error, %{data: 0, state: :stopped}}
+      |> ResponseFsm.stop == {:error, %Fsm{data: 0, state: :stopped}}
     )
   end
 
@@ -275,13 +275,13 @@ defmodule FsmTest do
     assert(
       PatternMatch.new
       |> PatternMatch.stop
-      |> PatternMatch.dummy == {:dummy, %{data: 10, state: :stopped}}
+      |> PatternMatch.dummy == {:dummy, %Fsm{data: 10, state: :stopped}}
     )
 
     assert(
       PatternMatch.new
       |> PatternMatch.stop
-      |> PatternMatch.toggle_speed == {:error, %{data: 10, state: :stopped}}
+      |> PatternMatch.toggle_speed == {:error, %Fsm{data: 10, state: :stopped}}
     )
 
     assert_raise(FunctionClauseError, fn ->

@@ -1,4 +1,5 @@
 defmodule Fsm do
+  defstruct [:state, :data]
   defmacro __using__(opts) do
     quote do
       import Fsm
@@ -7,18 +8,18 @@ defmodule Fsm do
       @declared_events HashSet.new
 
       def new do
-        %{state: unquote(opts[:initial_state]), data: unquote(opts[:initial_data])}
+        %Fsm{state: unquote(opts[:initial_state]), data: unquote(opts[:initial_data])}
       end
 
       def new(initial_data) do
-        %{state: unquote(opts[:initial_state]), data: initial_data}
+        %Fsm{state: unquote(opts[:initial_state]), data: initial_data}
       end
 
-      def state(%{state: state}), do: state
-      def data(%{data: data}), do: data
+      def state(%Fsm{state: state}), do: state
+      def data(%Fsm{data: data}), do: data
 
-      defp change_state(%{} = fsm, {:action_responses, responses}), do: parse_action_responses(fsm, responses)
-      defp change_state(%{} = fsm, _), do: fsm
+      defp change_state(%Fsm{} = fsm, {:action_responses, responses}), do: parse_action_responses(fsm, responses)
+      defp change_state(%Fsm{} = fsm, _), do: fsm
 
       defp parse_action_responses(fsm, responses) do
         Enum.reduce(responses, fsm, fn(response, fsm) ->
@@ -27,11 +28,11 @@ defmodule Fsm do
       end
 
       defp handle_action_response(fsm, {:next_state, next_state}) do
-        %{fsm | state: next_state}
+        %Fsm{fsm | state: next_state}
       end
 
       defp handle_action_response(fsm, {:new_data, new_data}) do
-        %{fsm | data: new_data}
+        %Fsm{fsm | data: new_data}
       end
 
       defp handle_action_response(fsm, {:respond, response}) do
@@ -162,11 +163,11 @@ defmodule Fsm do
       transition_args = [
         if @declaring_state do
           quote do
-            %{state: unquote(@declaring_state) = unquote(state_arg), data: unquote(data_arg)} = fsm
+            %Fsm{state: unquote(@declaring_state) = unquote(state_arg), data: unquote(data_arg)} = fsm
           end
         else
           quote do
-            %{state: unquote(state_arg), data: unquote(data_arg)} = fsm
+            %Fsm{state: unquote(state_arg), data: unquote(data_arg)} = fsm
           end
         end,
 
